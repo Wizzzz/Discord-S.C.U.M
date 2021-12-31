@@ -150,35 +150,27 @@ class Client:
 
 			if updateGateway:
 				self.gateway.sessionobj = self.s
-				(
-					self.gateway.proxy_type,
-					self.gateway.proxy_host,
-					self.gateway.proxy_port,
-					self.gateway.proxy_auth
-				) = [None] * 4
+				(self.gateway.proxy_type, self.gateway.proxy_host,
+				 self.gateway.proxy_port, self.gateway.proxy_auth) = [None] * 4
 
 			return
 
 		#proxy type(s)
-		regex_prox = r'(http|https|socks4|socks4a|socks5|socks5h)?(?::\/\/)?(\w+(?::\w+)?@)?((?:\d{1,3})(?:\.\d{1,3}){3})(?::(\d{1,5}))'
+		regex_prox = r'(http|https)?(?::\/\/)?(\w+(?::\w+)?@)?((?:\d{1,3})(?:\.\d{1,3}){3})(?::(\d{1,5}))'
 		search = re.search(regex_prox, newProxy)
 		if search:
-			proxy_type = true_type = search.group(1)
-			if not proxy_type:
-				true_type = 'http'
-				proxy_type = ('http', 'https')
-			else:
-				proxy_type = (proxy_type,)
+			true_type = search.group(1)
+			proxy_type = ('http', 'https')
 			auth = search.group(2)
 			if auth:
 				proxy_auth = auth[:-1].split(':')
-				if len(proxy_auth)==1:
+				if len(proxy_auth) == 1:
 					proxy_auth.append('')
 			proxy_host = search.group(3)
 			proxy_port = search.group(4)
 
 			#proxy updating
-			proxies = {t:'{}://{}:{}'.format(t, proxy_host, proxy_port) for t in proxy_type}
+			proxies = {t: newProxy for t in proxy_type}
 
 			self.s.proxies.update(proxies)
 			if auth:
@@ -192,7 +184,8 @@ class Client:
 				self.gateway.proxy_host = proxy_host
 				self.gateway.proxy_port = proxy_port
 				if self.s.auth:
-					self.gateway.proxy_auth = (self.s.auth.username, self.s.auth.password)
+					self.gateway.proxy_auth = (self.s.auth.username,
+											   self.s.auth.password)
 				else:
 					self.gateway.proxy_auth = None
 
