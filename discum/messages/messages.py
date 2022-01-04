@@ -254,9 +254,11 @@ class Messages(object):
 		url = self.discord+"channels/"+channelID+"/typing"
 		return Wrapper.sendRequest(self.s, 'post', url, log=self.log)
 
-	def editMessage(self, channelID, messageID, newMessage):
+	def editMessage(self, channelID, messageID, newMessage, newEmbed):
 		url = self.discord+"channels/"+channelID+"/messages/"+messageID
 		body = {"content": newMessage}
+		if newEmbed != None:
+			body["embed"] = newEmbed
 		return Wrapper.sendRequest(self.s, 'patch', url, body, log=self.log)
 
 	def deleteMessage(self, channelID, messageID):
@@ -285,7 +287,7 @@ class Messages(object):
 		url = self.discord+"channels/"+channelID+"/messages/"+messageID+"/reactions/"+parsedEmoji+"/%40me"
 		return Wrapper.sendRequest(self.s, 'delete', url, log=self.log)
 
-	def getReactionUsers(self,channelID,messageID,emoji):
+	def getReactionUsers(self,channelID,messageID,emoji,afterUserID,limit):
 		parsedEmoji = quote_plus(emoji)
 		url = self.discord+"channels/"+channelID+"/messages/"+messageID+"/reactions/"+parsedEmoji+"?limit="+str(limit)
 		if afterUserID:
